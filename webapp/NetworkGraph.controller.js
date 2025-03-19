@@ -32,13 +32,9 @@ sap.ui.define([
            // this.baseUrl = "http://localhost:3000/api/";
 
             // Load config.json
-            var oConfigModel = new JSONModel("./config.json");
-            this.getView().setModel(oConfigModel, "config");
+            this.baseUrl = "https://grafik-flax.vercel.app/api/"; // Static URL assignment
 
-            oConfigModel.attachRequestCompleted(function () {
-                console.log("Base URL:", this.baseUrl); // Add this line
-                this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
-                console.log("Base URL:", this.baseUrl); // Verify the value
+            console.log("Base URL:", this.baseUrl); // Verify the value
 
             dataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
                 oTableModel.setProperty("/tableData", data);
