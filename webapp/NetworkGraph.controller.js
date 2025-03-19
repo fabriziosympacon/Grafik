@@ -32,7 +32,7 @@ sap.ui.define([
            // this.baseUrl = "http://localhost:3000/api/";
 
             // Load config.json
-            var oConfigModel = new JSONModel("config.json");
+            var oConfigModel = new JSONModel("./config.json");
             this.getView().setModel(oConfigModel, "config");
 
             oConfigModel.attachRequestCompleted(function () {
