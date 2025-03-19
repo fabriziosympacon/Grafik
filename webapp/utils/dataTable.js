@@ -16,6 +16,7 @@ sap.ui.define(["sap/m/MessageToast"], function (MessageToast) {
         return uniqueData;
     }
 
+    
     function sortDataAlphabetically(data, key) {
         return data.sort((a, b) => {
             if (a[key] < b[key]) return -1;
