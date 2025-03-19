@@ -27,7 +27,7 @@ sap.ui.define([
 
             this.baseUrl = window.location.hostname === "localhost"
             ? "http://localhost:3000/api/"
-            : "https://ui5-mongodb-project.vercel.app/api/";
+            : "https://grafik-flax.vercel.app/api/";
 
             DataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
                 oTableModel.setProperty("/tableData", data);
