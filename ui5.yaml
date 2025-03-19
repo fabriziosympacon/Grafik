@@ -2,6 +2,17 @@ specVersion: "4.0"
 metadata:
   name: sap-suite-ui-commons-sample--network-graph-bidirectional-collapsing
 type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
 resources:
   configuration:
     paths:
