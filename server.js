@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log("Environment Variables:", process.env.BASE_URL, process.env.NODE_ENV, process.env.MONGODB_URI);
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');

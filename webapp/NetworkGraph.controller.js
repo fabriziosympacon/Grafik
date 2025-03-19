@@ -25,9 +25,19 @@ sap.ui.define([
             });
             oView.setModel(oTableModel, "dataModel");
 
-            this.baseUrl = window.location.hostname === "localhost"
-            ? "http://localhost:3000/api/"
-            : "https://grafik-flax.vercel.app/api/";
+           // this.baseUrl = window.location.hostname === "localhost"
+           // ? "http://localhost:3000/api/"
+           // : "https://grafik-flax.vercel.app/api/";
+
+           // this.baseUrl = "http://localhost:3000/api/";
+
+            // Load config.json
+            var oConfigModel = new JSONModel("config.json");
+            this.getView().setModel(oConfigModel, "config");
+
+            oConfigModel.attachRequestCompleted(function () {
+                this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
+
 
             DataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
                 oTableModel.setProperty("/tableData", data);
@@ -45,9 +55,11 @@ sap.ui.define([
             oGraph.attachSelectionChange(this.selectionChange, this);
 
             //Selection in the table
-            var oTable = oView.byId("dataTable"); 
+            var oTable = oView.byId("dataTable");
             oTable.attachRowSelectionChange(this.onRowSelectionChange, this);
-        },
+        }.bind(this)); // Bind 'this' to the callback function
+    },
+
 
         onRowSelectionChange: function (oEvent) {
             var oSelectedItem = oEvent.getParameter("rowContext");
