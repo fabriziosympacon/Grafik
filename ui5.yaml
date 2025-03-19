@@ -7,3 +7,5 @@ framework:
   version: "1.132.0"
   libraries:
     - name: themelib_sap_horizon
+    - name: themelib_sap_fiori_3
+    - name: themelib_sap_belize
