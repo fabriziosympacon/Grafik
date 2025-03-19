@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/datatable", // Import the datatable utility
     "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/vorgaengerLoader",  // Import the vorgaengerLoader module correctly
     "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/VorgaengerTableUtils"
-], function (Controller, JSONModel, OverflowToolbarButton, DataLoader, DataTable, vorgaengerLoader, VorgaengerTableUtils) {
+], function (Controller, JSONModel, OverflowToolbarButton, DataLoader, datatable, vorgaengerLoader, VorgaengerTableUtils) {
     "use strict";
 
     return Controller.extend("sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing.NetworkGraph", {
@@ -39,11 +39,11 @@ sap.ui.define([
                 this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
 
 
-            //DataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
-            //    oTableModel.setProperty("/tableData", data);
-            //    oTableModel.setProperty("/isLoading", false);
-            //    oTableModel.refresh(true); // Ensure UI updates
-            //});
+            datatable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
+                oTableModel.setProperty("/tableData", data);
+                oTableModel.setProperty("/isLoading", false);
+                oTableModel.refresh(true); // Ensure UI updates
+            });
 
             oGraph.getToolbar().addContent(new OverflowToolbarButton({
                 icon: "sap-icon://collapse-all",
