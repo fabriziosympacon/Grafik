@@ -38,7 +38,7 @@ sap.ui.define([
             oConfigModel.attachRequestCompleted(function () {
                 console.log("Base URL:", this.baseUrl); // Add this line
                 this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
-
+                console.log("Base URL:", this.baseUrl); // Verify the value
 
             dataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
                 oTableModel.setProperty("/tableData", data);
