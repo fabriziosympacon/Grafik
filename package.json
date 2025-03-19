@@ -13,7 +13,7 @@
     "start": "concurrently \"npm run start-server\" \"npm run start-ui5\"",
     "start-server": "node server.js",
     "start-ui5": "ui5 serve",
-    "build": "ui5 build --all --dest dist",
+    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
     "postinstall": "npm install -g @ui5/cli",
     "lint": "eslint webapp && ui5lint",
     "test-ui5": "start-server-and-test start http://localhost:8080 test-runner-coverage",
@@ -22,7 +22,7 @@
     "test": "npm run lint && npm run test-ui5",
     "build-self-contained": "ui5 build self-contained -a --clean-dest",
     "serve-dist": "ws --compress -d dist",
-    "vercel-build": "mkdir dist && ui5 build --all --dest dist"
+    "vercel-build": "ui5 build --all --dest dist"
   },
   "keywords": [],
   "license": "ISC",
