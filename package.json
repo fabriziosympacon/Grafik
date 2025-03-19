@@ -1,0 +1,50 @@
+{
+  "name": "sap-suite-ui-commons-sample--network-graph-bidirectional-collapsing",
+  "version": "1.0.0",
+  "author": "SAP SE",
+  "description": "Sample: Bidirectional Custom Collapsing",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "^20.11.0 || >=22.0.0",
+    "npm": ">= 8"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run start-server\" \"npm run start-ui5\"",
+    "start-server": "node server.js",
+    "start-ui5": "ui5 serve",
+    "build": "ui5 build --all --dest dist",
+    "postinstall": "npm install -g @ui5/cli",
+    "lint": "eslint webapp && ui5lint",
+    "test-ui5": "start-server-and-test start http://localhost:8080 test-runner-coverage",
+    "test-runner": "ui5-test-runner --port 8081 --url http://localhost:8080/test/testsuite.qunit.html",
+    "test-runner-coverage": "ui5-test-runner --port 8081 --url http://localhost:8080/test/testsuite.qunit.html --coverage -ccb 100 -ccf 100 -ccl 100 -ccs 100",
+    "test": "npm run lint && npm run test-ui5",
+    "build-self-contained": "ui5 build self-contained -a --clean-dest",
+    "serve-dist": "ws --compress -d dist",
+    "vercel-build": "ui5 build --all --dest dist"
+  },
+  "keywords":[],
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "@sapui5/sap.suite.ui.commons": "1.108.0" 
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@ui5/cli": "^4.0.13",
+    "@ui5/linter": "^1.4.1",
+    "@ui5/middleware-code-coverage": "^2.0.1",
+    "concurrently": "^7.6.0",
+    "eslint": "^9.16.0",
+    "globals": "^15.12.0",
+    "local-web-server": "^5.4.0",
+    "rimraf": "^6.0.1",
+    "start-server-and-test": "^2.0.8",
+    "ui5-test-runner": "^5.3.6"
+  }
+}

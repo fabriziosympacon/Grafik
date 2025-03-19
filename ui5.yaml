@@ -1,0 +1,9 @@
+specVersion: "4.0"
+metadata:
+  name: sap-suite-ui-commons-sample--network-graph-bidirectional-collapsing
+type: application
+framework:
+  name: SAPUI5
+  version: "1.132.0"
+  libraries:
+    - name: themelib_sap_horizon
