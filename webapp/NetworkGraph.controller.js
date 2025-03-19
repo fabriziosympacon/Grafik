@@ -36,6 +36,7 @@ sap.ui.define([
             this.getView().setModel(oConfigModel, "config");
 
             oConfigModel.attachRequestCompleted(function () {
+                console.log("Base URL:", this.baseUrl); // Add this line
                 this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
 
 
