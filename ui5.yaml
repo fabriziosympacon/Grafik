@@ -2,7 +2,6 @@ specVersion: "4.0"
 metadata:
   name: sap-suite-ui-commons-sample--network-graph-bidirectional-collapsing
 type: application
-type: application
 resources:
   configuration:
     paths:
