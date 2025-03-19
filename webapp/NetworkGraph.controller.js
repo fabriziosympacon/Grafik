@@ -39,11 +39,11 @@ sap.ui.define([
                 this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
 
 
-            DataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
-                oTableModel.setProperty("/tableData", data);
-                oTableModel.setProperty("/isLoading", false);
-                oTableModel.refresh(true); // Ensure UI updates
-            });
+            //DataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
+            //    oTableModel.setProperty("/tableData", data);
+            //    oTableModel.setProperty("/isLoading", false);
+            //    oTableModel.refresh(true); // Ensure UI updates
+            //});
 
             oGraph.getToolbar().addContent(new OverflowToolbarButton({
                 icon: "sap-icon://collapse-all",
