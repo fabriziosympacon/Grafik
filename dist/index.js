@@ -1,0 +1,2 @@
+sap.ui.require(["sap/m/Shell","sap/m/App","sap/m/Page","sap/ui/core/ComponentContainer","sap/ui/core/Core"],function(e,i,n,a,t){"use strict";t.attachInit(function(){new e({app:new i({pages:[new n({title:"Bidirectional Custom Collapsing",enableScrolling:false,content:[new a({height:"100%",name:"sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing",settings:{id:"sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing"}})]})]})}).placeAt("content")})});
+//# sourceMappingURL=index.js.map

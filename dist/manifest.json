@@ -1,0 +1,54 @@
+{
+  "_version": "1.12.0",
+  "sap.app": {
+      "id": "sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing",
+      "type": "application",
+      "title": "Network Graph Sample",
+      "description": "Sample application demonstrating the Network Graph control with bidirectional collapsing.",
+      "applicationVersion": {
+          "version": "1.0.0"
+      }
+  },
+  "sap.ui": {
+      "technology": "UI5",
+      "icons": {
+          "icon": "",
+          "favIcon": "",
+          "phone": "",
+          "phone@2": "",
+          "tablet": "",
+          "tablet@2": ""
+      },
+      "deviceTypes": {
+          "desktop": true,
+          "tablet": true,
+          "phone": true
+      }
+  },
+  "sap.ui5": {
+      "contentDensities": {
+          "compact": true,
+          "cozy": true
+      },
+      "rootView": {
+          "viewName": "sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing.NetworkGraph",
+          "type": "XML",
+          "async": true,
+          "id": "networkGraph"
+      },
+      "dependencies": {
+          "minUI5Version": "1.60.0",
+          "libs": {
+              "sap.m": {},
+              "sap.ui.core": {},
+              "sap.suite.ui.commons": {}
+          }
+      },
+      "models": {
+          "": {
+              "type": "sap.ui.model.json.JSONModel",
+              "uri": "graph.json"
+          }
+      }
+  }
+}

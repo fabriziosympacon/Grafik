@@ -1,0 +1,83 @@
+<mvc:View
+    controllerName="sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing.NetworkGraph"
+    xmlns="sap.suite.ui.commons.networkgraph"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:table="sap.ui.table">
+    
+    <m:Panel id="tablePanel" headerText="Archivierungsobjekte" expandable="true" expanded="true">
+        <table:Table id="dataTable" rows="{dataModel>/data}" visibleRowCount="5" 
+                     selectionMode="Single" selectionBehavior="Row" 
+                     rowSelectionChange="onSelectionChange">
+            <table:columns>
+                <table:Column>
+                    <m:Label text="Archivierungsobjekt"/>
+                    <table:template>
+                        <m:Text text="{dataModel>Archivierungsobjekt}"/>
+                    </table:template>
+                </table:Column>
+                <table:Column visible="{dataModel>/showEN}">
+                    <m:Label text="Bezeichnung EN"/>
+                    <table:template>
+                        <m:Text text="{dataModel>O_EN}"/>
+                    </table:template>
+                </table:Column>
+                <table:Column visible="{dataModel>/showDE}">
+                    <m:Label text="Bezeichnung DE"/>
+                    <table:template>
+                        <m:Text text="{dataModel>O_DE}"/>
+                    </table:template>
+                </table:Column>
+            </table:columns>
+        </table:Table>
+    </m:Panel>
+
+    <m:Panel id="vorgaengerPanel"
+             headerText="Ausschluss Vorgängerobjekte wählen"
+             expandable="true"
+             expanded="false">
+        <table:Table id="vorgaengerTable"
+                     rows="{dataModel>/vorgaengerData}"
+                     visibleRowCount="5"
+                     selectionMode="MultiToggle" 
+                     selectionBehavior="Row"
+                     rowSelectionChange="onVorgaengerTableSelectionChange">
+            <table:columns>
+                <table:Column>
+                    <m:Label text="Vorgänger"/>
+                    <table:template>
+                        <m:Text text="{dataModel>Vorgaenger}"/>
+                    </table:template>
+                </table:Column>
+                <table:Column visible="{dataModel>/showEN}">
+                    <m:Label text="Bezeichnung EN"/>
+                    <table:template>
+                        <m:Text text="{dataModel>V_EN}"/>
+                    </table:template>
+                </table:Column>
+                <table:Column visible="{dataModel>/showDE}">
+                    <m:Label text="Bezeichnung DE"/>
+                    <table:template>
+                        <m:Text text="{dataModel>V_DE}"/>
+                    </table:template>
+                </table:Column>
+            </table:columns>
+        </table:Table>
+    </m:Panel>
+
+    <m:Panel id="graphPanel" headerText="Archivierungsläufe" expandable="true" expanded="true" visible="true">
+<Graph enableWheelZoom="false" id="graph" nodes="{/data/nodes}" lines="{/data/lines}">
+    <nodes>
+        <Node key="{key}" title="{title}" icon="{icon}" attributes="{path:'attributes', templateShareable:true}" showActionLinksButton="false" showDetailButton="false" showExpandButton="false" shape="Box">
+            <attributes>
+                <ElementAttribute label="{label}" value="{value}"/>
+            </attributes>
+        </Node>
+    </nodes>
+    <lines>
+        <Line from="{from}" to="{to}"/>
+    </lines>
+</Graph>
+    </m:Panel>
+
+</mvc:View>
