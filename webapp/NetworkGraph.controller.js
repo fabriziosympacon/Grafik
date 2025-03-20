@@ -34,31 +34,26 @@ sap.ui.define([
            this.baseUrl = "https://grafik-flax.vercel.app/api/";
            console.log("Base URL:", this.baseUrl);
 
-            oConfigModel.attachRequestCompleted(function () {
-                console.log("Base URL:", this.baseUrl); // Add this line
-                this.baseUrl = this.getView().getModel("config").getProperty("/baseUrl");
-                console.log("Base URL:", this.baseUrl); // Verify the value
+           dataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
+            oTableModel.setProperty("/tableData", data);
+            oTableModel.setProperty("/isLoading", false);
+            oTableModel.refresh(true); // Ensure UI updates
+        });
 
-            dataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
-                oTableModel.setProperty("/tableData", data);
-                oTableModel.setProperty("/isLoading", false);
-                oTableModel.refresh(true); // Ensure UI updates
-            });
+        oGraph.getToolbar().addContent(new OverflowToolbarButton({
+            icon: "sap-icon://collapse-all",
+            tooltip: "Collapse all nodes",
+            type: "Transparent",
+            press: this.hideAllNodes.bind(this)
+        }));
 
-            oGraph.getToolbar().addContent(new OverflowToolbarButton({
-                icon: "sap-icon://collapse-all",
-                tooltip: "Collapse all nodes",
-                type: "Transparent",
-                press: this.hideAllNodes.bind(this)
-            }));
+        oGraph.attachSelectionChange(this.selectionChange, this);
 
-            oGraph.attachSelectionChange(this.selectionChange, this);
-
-            //Selection in the table
-            var oTable = oView.byId("dataTable");
-            oTable.attachRowSelectionChange(this.onRowSelectionChange, this);
-        }.bind(this)); // Bind 'this' to the callback function
+        //Selection in the table
+        var oTable = oView.byId("dataTable");
+        oTable.attachRowSelectionChange(this.onRowSelectionChange, this);
     },
+
 
 
         onRowSelectionChange: function (oEvent) {
