@@ -2,127 +2,154 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/m/OverflowToolbarButton",
-    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/DataLoader", // Import the DataLoader module
-    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/dataTable", // Import the datatable utility
-    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/vorgaengerLoader",  // Import the vorgaengerLoader module correctly
-    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/VorgaengerTableUtils"
-], function (Controller, JSONModel, OverflowToolbarButton, DataLoader, dataTable, vorgaengerLoader, VorgaengerTableUtils) {
+    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/DataLoader",
+    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/dataTable",
+    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/vorgaengerLoader",
+    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/VorgaengerTableUtils",
+    "sap/suite/ui/commons/sample/NetworkGraphBidirectionalCollapsing/utils/PrintUtil"
+], function (Controller, JSONModel, OverflowToolbarButton, DataLoader, dataTable, vorgaengerLoader, VorgaengerTableUtils, PrintUtil) {
     "use strict";
 
     return Controller.extend("sap.suite.ui.commons.sample.NetworkGraphBidirectionalCollapsing.NetworkGraph", {
         onInit: function () {
-            var oView = this.getView(),
-                oGraph = oView.byId("graph"),
-                oModel = new JSONModel({ isLoading: true, data: {} });
+            this.oView = this.getView();
+            this.oGraph = this.oView.byId("graph");
+            this.oTable = this.oView.byId("dataTable");
+            this.baseUrl = "https://grafik-flax.vercel.app/api/";
+                        
+            this._initModels();
+            this._loadTableData();
+            this._setupGraphToolbar();
+            
+            this.oGraph.attachSelectionChange(this.selectionChange, this);
+            this.oTable.attachRowSelectionChange(this.onRowSelectionChange, this);
+        },
 
-            oView.setModel(oModel);
-            oGraph.setBusy(true);
+        onAfterRendering: function () {
+            this._removeLegendButton();
+        },
+        
+        _removeLegendButton: function () {
+            if (this.oGraph && this.oGraph.getToolbar()) {
+                const toolbar = this.oGraph.getToolbar();
+                const buttons = toolbar.getContent();
+        
+                for (let i = 0; i < buttons.length; i++) {
+                    if (buttons[i] instanceof sap.m.Button && buttons[i].getIcon() === "sap-icon://legend") {
+                        toolbar.removeContent(buttons[i]);
+                        break; // Exit the loop after removing the button
+                    }
+                }
+            }
+        },
 
-            var oTableModel = new JSONModel({
+        _initModels: function () {
+            const oGraphModel = new JSONModel({ isLoading: true, data: {} });
+            this.oView.setModel(oGraphModel);
+
+            const oTableModel = new JSONModel({
                 isLoading: true,
                 tableData: [],
                 vorgaengerData: []
             });
-            oView.setModel(oTableModel, "dataModel");
+            this.oView.setModel(oTableModel, "dataModel");
 
-           // this.baseUrl = window.location.hostname === "localhost"
-           // ? "http://localhost:3000/api/"
-           // : "https://grafik-flax.vercel.app/api/";
+            this.oGraph.setBusy(true);
+        },
 
-           // this.baseUrl = "http://localhost:3000/api/";
+        _loadTableData: function () {
+            const oTableModel = this.oView.getModel("dataModel");
+            dataTable.loadData(oTableModel, null, false, this.baseUrl, (data) => {
+                oTableModel.setProperty("/tableData", data);
+                oTableModel.setProperty("/isLoading", false);
+                oTableModel.refresh(true);
+            });
+        },
 
-           this.baseUrl = "https://grafik-flax.vercel.app/api/";
-           console.log("Base URL:", this.baseUrl);
-
-           dataTable.loadData(oTableModel, null, false, this.baseUrl, function (data) {
-            oTableModel.setProperty("/tableData", data);
-            oTableModel.setProperty("/isLoading", false);
-            oTableModel.refresh(true); // Ensure UI updates
-        });
-
-        oGraph.getToolbar().addContent(new OverflowToolbarButton({
-            icon: "sap-icon://collapse-all",
-            tooltip: "Collapse all nodes",
-            type: "Transparent",
-            press: this.hideAllNodes.bind(this)
-        }));
-
-        oGraph.attachSelectionChange(this.selectionChange, this);
-
-        //Selection in the table
-        var oTable = oView.byId("dataTable");
-        oTable.attachRowSelectionChange(this.onRowSelectionChange, this);
-    },
-
-
-
-        onRowSelectionChange: function (oEvent) {
-            var oSelectedItem = oEvent.getParameter("rowContext");
-            if (oSelectedItem) {
-                var oSelectedData = oSelectedItem.getObject();
-                console.log("Selected row data:", oSelectedData);
-        
-                var archivierungsObjekt = oSelectedData.Archivierungsobjekt;
-                var sUrl = this.baseUrl + "vorgaenger?archivierungsobjekt=" + archivierungsObjekt;
-                console.log("Constructed URL:", sUrl);
-        
-                vorgaengerLoader.loadVorgaengerData(sUrl, this);
-        
-                DataLoader.loadGraphData(this.getView().getModel(), this.getView().byId("graph"), sUrl, this.showAllNodes.bind(this));
-        
-        
+        _setupGraphToolbar: function () {
+            if (this.oGraph && this.oGraph.getToolbar()) {
+                const aButtons = [
+                    {
+                        icon: "sap-icon://print",
+                        tooltip: "Print Graph",
+                        press: this.printGraph.bind(this)
+                    }
+                ];
+                aButtons.forEach((btn) => {
+                    this.oGraph.getToolbar().addContent(new OverflowToolbarButton({
+                        icon: btn.icon,
+                        tooltip: btn.tooltip,
+                        type: "Transparent",
+                        press: btn.press
+                    }));
+                });
             }
         },
-        
+
+        printGraph: function () {
+            if (this.oGraph) {
+                PrintUtil.printGraph(this.oGraph);
+            } else {
+                console.warn("Graph not found!");
+            }
+        },
+
+        onRowSelectionChange: function (oEvent) {
+            const oSelectedItem = oEvent.getParameter("rowContext");
+            if (!oSelectedItem) return;
+
+            const oSelectedData = oSelectedItem.getObject();
+            console.log("Selected row data:", oSelectedData);
+
+            // Get the data model
+            const oDataModel = this.getView().getModel("dataModel");
+
+            // Format the header text
+            const headerText = "Archivierungsläufe: " + oSelectedData.Archivierungsobjekt;
+
+            // Update the data model
+            oDataModel.setProperty("/vorgaengerPanelHeader", headerText);
+
+            const sUrl = `${this.baseUrl}vorgaenger?archivierungsobjekt=${oSelectedData.Archivierungsobjekt}`;
+            console.log("Constructed URL:", sUrl);
+
+            vorgaengerLoader.loadVorgaengerData(sUrl, this);
+            DataLoader.loadGraphData(this.oView.getModel(), this.oGraph, sUrl, this.showAllNodes.bind(this));
+        },
 
         destroyGraph: function () {
-            var oGraph = this.getView().byId("graph");
-            oGraph.destroyNodes(); // Entfernt Nodes
-            oGraph.destroyLines(); // Entfernt Lines
+            this.oGraph.destroyNodes();
+            this.oGraph.destroyLines();
         },
 
         showAllNodes: function () {
-            var oGraph = this.getView().byId("graph");
-            oGraph.getNodes().forEach(function (oNode) {
-                oNode.setVisible(true);
-            });
+            this.oGraph.getNodes().forEach(oNode => oNode.setVisible(true));
         },
 
         hideAllNodes: function () {
-            var oGraph = this.getView().byId("graph");
-            oGraph.getNodes().forEach(function (oNode) {
-                oNode.setVisible(false);
-            });
+            this.oGraph.getNodes().forEach(oNode => oNode.setVisible(false));
         },
-
 
         selectionChange: function (oEvent) {
             console.log("Selection changed:", oEvent.getParameter("items"));
         },
 
         replaceGraphData: function (nodesArray, linesArray) {
-            var oGraph = this.getView().byId("graph");
-        
-            //  Schritt 1: Alle Nodes & Lines sicher entfernen
-            this.destroyGraph(); // Verhindert doppelte IDs
-        
-            // Schritt 2: Logging, um doppelte IDs zu erkennen
-            console.log("Aktuelle Nodes vor Einfügen:", oGraph.getNodes().map(n => n.getKey()));
-        
-            // Schritt 3: Nodes einfügen, nur wenn sie nicht existieren
+            this.destroyGraph();
+
+            console.log("Aktuelle Nodes vor Einfügen:", this.oGraph.getNodes().map(n => n.getKey()));
+
             if (Array.isArray(nodesArray)) {
-                nodesArray.forEach(function (nodeData) {
-                    var existingNode = oGraph.getNodes().find(n => n.getKey() === nodeData.key);
-                    if (!existingNode) { // Nur neue Nodes einfügen
-                        var newNode = new sap.suite.ui.commons.networkgraph.Node({
+                nodesArray.forEach((nodeData) => {
+                    if (!this.oGraph.getNodes().some(n => n.getKey() === nodeData.key)) {
+                        this.oGraph.addNode(new sap.suite.ui.commons.networkgraph.Node({
                             key: nodeData.key,
                             title: nodeData.title,
                             shape: "Box",
-                            attributes: nodeData.V_DE ? [new sap.suite.ui.commons.networkgraph.ElementAttribute({
-                                label: nodeData.V_DE
-                            })] : [] // Conditional addition of attribute
-                        });
-                        oGraph.addNode(newNode);
+                            attributes: nodeData.V_DE ? [
+                                new sap.suite.ui.commons.networkgraph.ElementAttribute({ label: nodeData.V_DE })
+                            ] : []
+                        }));
                     } else {
                         console.warn("Doppelter Node verhindert:", nodeData.key);
                     }
@@ -130,36 +157,54 @@ sap.ui.define([
             } else {
                 console.error("nodesArray ist nicht korrekt");
             }
-        
-            // Schritt 4: Lines einfügen, falls nötig
+
             if (Array.isArray(linesArray)) {
-                linesArray.forEach(function (lineData) {
-                    oGraph.addLine(new sap.suite.ui.commons.networkgraph.Line(lineData));
+                linesArray.forEach((lineData) => {
+                    this.oGraph.addLine(new sap.suite.ui.commons.networkgraph.Line(lineData));
                 });
             } else {
                 console.error("linesArray ist nicht korrekt");
             }
-        
-            oGraph.setBusy(false);
+
+            this.oGraph.setBusy(false);
         },
 
         onVorgaengerTableSelectionChange: function (oEvent) {
-            var oFilteredGraphData = VorgaengerTableUtils.onVorgaengerTableSelectionChange(oEvent, this);
+            const oFilteredGraphData = VorgaengerTableUtils.onVorgaengerTableSelectionChange(oEvent, this);
         
             if (oFilteredGraphData && oFilteredGraphData.nodes && oFilteredGraphData.lines) {
-                // Extract nodes and lines arrays
-                var filteredNodes = oFilteredGraphData.nodes;
-                var filteredLines = oFilteredGraphData.lines;
+                console.log("Filtered Nodes:", oFilteredGraphData.nodes);
+                console.log("Filtered Lines:", oFilteredGraphData.lines);
         
-                // Log the filtered data
-                console.log("Filtered Nodes:", filteredNodes);
-                console.log("Filtered Lines:", filteredLines);
+                this.replaceGraphData(oFilteredGraphData.nodes, oFilteredGraphData.lines);
         
-                // Call modified replaceGraphData with the arrays
-                this.replaceGraphData(filteredNodes, filteredLines);
+                // Retrieve selected keys from VorgaengerTableUtils
+                const aSelectedKeys = oEvent.getSource().getSelectedIndices().map(index => {
+                    return this.getView().getModel("dataModel").getProperty("/vorgaengerData/" + index + "/key").replace("VORG_","");
+                });
+        
+                // Format selected keys into a comma-separated string
+                const excludedObjects = aSelectedKeys.join(", ");
+        
+                // Retrieve existing header text
+                const oDataModel = this.getView().getModel("dataModel");
+                let headerText = oDataModel.getProperty("/vorgaengerPanelHeader");
+        
+                // Find and replace the excluded objects part
+                const excludedIndex = headerText.indexOf(" - Ausgeschlossene Objekte:");
+                if (excludedIndex !== -1) {
+                    headerText = headerText.substring(0, excludedIndex); // Remove existing excluded part
+                }
+        
+                // Append excluded objects to header text only if exists
+                if (excludedObjects) {
+                    headerText += " - Ausgeschlossene Objekte: " + excludedObjects;
+                }
+        
+                // Update data model with new header text
+                oDataModel.setProperty("/vorgaengerPanelHeader", headerText);
             }
-        },
-
-
+        
+        }
     });
 });

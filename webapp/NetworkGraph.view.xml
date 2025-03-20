@@ -65,10 +65,10 @@
         </table:Table>
     </m:Panel>
 
-    <m:Panel id="graphPanel" headerText="Archivierungsläufe" expandable="true" expanded="true" visible="true">
+    <m:Panel id="graphPanel" headerText="{dataModel>/vorgaengerPanelHeader}" expandable="true" expanded="true" visible="true">
 <Graph enableWheelZoom="false" id="graph" nodes="{/data/nodes}" lines="{/data/lines}">
     <nodes>
-        <Node key="{key}" title="{title}" icon="{icon}" attributes="{path:'attributes', templateShareable:true}" showActionLinksButton="false" showDetailButton="false" showExpandButton="false" shape="Box">
+        <Node key="{key}" title="{title}" icon="{icon}" attributes="{path:'attributes', templateShareable:true}" showActionLinksButton="false" showDetailButton="true" showExpandButton="true" shape="Box">
             <attributes>
                 <ElementAttribute label="{label}" value="{value}"/>
             </attributes>
